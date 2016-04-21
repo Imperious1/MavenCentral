@@ -1,8 +1,5 @@
 package imperiumnet.gradleplease.models;
 
-/**
- * Created by overlord on 4/18/16.
- */
 //MCModel = MavenCentralModel
 public class MCModel {
     private String latestVersion;
@@ -13,8 +10,8 @@ public class MCModel {
         return latestVersion;
     }
 
-    public void setLatestVersion(String latestVersion) {
-        this.latestVersion = latestVersion;
+    public void setLatestVersion(String mLatestVersion) {
+        this.latestVersion = mLatestVersion;
     }
 
     public String getLibrary() {

@@ -12,14 +12,14 @@ import android.view.MenuItem;
 import android.view.View;
 
 import imperiumnet.gradleplease.R;
+import imperiumnet.gradleplease.constants.Constant;
 
 public class GradleSearch extends AppCompatActivity {
 
 
-    FloatingActionButton fab;
-    SharedPreferences preferences;
-    private static final String themeKey = "theme_one_0101011";
-    SharedPreferences.Editor editor;
+    FloatingActionButton mFab;
+    SharedPreferences mPreferences;
+    SharedPreferences.Editor mEditor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,12 +52,12 @@ public class GradleSearch extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         } else if (id == R.id.color_one) {
-            if (!preferences.getString(themeKey, "default").equals("theme1")) {
+            if (!mPreferences.getString(Constant.THEME_KEY, Constant.DEFAULT).equals(Constant.THEME_ONE)) {
                 swapTheme("theme1");
             }
             return true;
         } else if (id == R.id.color_two) {
-            if (!preferences.getString(themeKey, "default").equals("themeDefault")) {
+            if (!mPreferences.getString(Constant.THEME_KEY, Constant.DEFAULT).equals(Constant.THEME_TWO)) {
                 swapTheme("themeDefault");
             }
         }
@@ -65,25 +65,25 @@ public class GradleSearch extends AppCompatActivity {
     }
 
     public void swapTheme(String theme) {
-        if (editor == null)
-            editor = preferences.edit();
-        editor.remove(themeKey);
-        editor.putString(themeKey, theme);
-        editor.apply();
+        if (mEditor == null)
+            mEditor = mPreferences.edit();
+        mEditor.remove(Constant.THEME_KEY);
+        mEditor.putString(Constant.THEME_KEY, theme);
+        mEditor.apply();
         initialize();
     }
 
     public void initialize() {
-        preferences = getSharedPreferences("Theme Settings", Context.MODE_PRIVATE);
-        if (preferences.getString(themeKey, "default").equals("theme1"))
+        mPreferences = getSharedPreferences("Theme Settings", Context.MODE_PRIVATE);
+        if (mPreferences.getString(Constant.THEME_KEY, "mDefault").equals(Constant.THEME_ONE))
             super.setTheme(R.style.shadow);
-        else if (preferences.getString(themeKey, "default").equals("themeDefault"))
+        else if (mPreferences.getString(Constant.THEME_KEY, "mDefault").equals(Constant.THEME_TWO))
             super.setTheme(R.style.shadowDefault);
         setContentView(R.layout.activity_gradle_search);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        mFab = (FloatingActionButton) findViewById(R.id.fab);
+        mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(GradleSearch.this, SearchActivity.class);

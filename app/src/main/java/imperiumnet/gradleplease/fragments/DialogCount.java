@@ -13,24 +13,21 @@ import android.widget.EditText;
 
 import imperiumnet.gradleplease.R;
 
-/**
- * Created by overlord on 4/20/16.
- */
 public class DialogCount extends DialogFragment {
 
-    public interface Communicator {
+    public interface DialogClickListeners {
         void hideFrag();
         void setResult(String number);
     }
     AppCompatImageButton close;
     Button btnSubmit;
     EditText userInput;
-    Communicator communicator;
+    DialogClickListeners mDialogClickListener;
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        communicator = (Communicator) activity;
+        mDialogClickListener = (DialogClickListeners) activity;
     }
 
     @Nullable
@@ -43,13 +40,13 @@ public class DialogCount extends DialogFragment {
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                communicator.hideFrag();
+                mDialogClickListener.hideFrag();
             }
         });
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                communicator.setResult(userInput.getText().toString());
+                mDialogClickListener.setResult(userInput.getText().toString());
             }
         });
         return view;

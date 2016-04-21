@@ -25,32 +25,30 @@ import java.util.concurrent.ExecutionException;
 
 import imperiumnet.gradleplease.R;
 import imperiumnet.gradleplease.adapters.RecyclerAdapter;
+import imperiumnet.gradleplease.constants.Constant;
 import imperiumnet.gradleplease.fragments.DialogCount;
 import imperiumnet.gradleplease.models.MCModel;
-import imperiumnet.gradleplease.network.NetworkUtilz;
+import imperiumnet.gradleplease.network.NetworkUtilsJson;
 import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter;
 import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter;
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
-public class SearchActivity extends AppCompatActivity implements DialogCount.Communicator {
+public class SearchActivity extends AppCompatActivity implements DialogCount.DialogClickListeners {
 
-    private SearchView searchView;
-    private RelativeLayout relativeLayout;
-    private RecyclerAdapter adapter;
-    private static final String themeKey = "theme_one_0101011";
-    private static final String single = "single_key_14890672";
-    private static final String count = "count_192391027";
-    private SharedPreferences preferences;
-    private SharedPreferences.Editor editor;
-    private ArrayList<MCModel> list;
-    private String queryy;
+    private SearchView mSearchView;
+    private RelativeLayout mRelativeLay;
+    private RecyclerAdapter mRecyclerAdapter;
+    private SharedPreferences mPreferences;
+    private SharedPreferences.Editor MPEditor;
+    private ArrayList<MCModel> mDataList;
+    private String mQueryS;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        preferences = getSharedPreferences("Theme Settings", Context.MODE_PRIVATE);
-        if (preferences.getString(themeKey, "default").equals("theme1"))
+        mPreferences = getSharedPreferences("Theme Settings", Context.MODE_PRIVATE);
+        if (mPreferences.getString(Constant.THEME_KEY, Constant.DEFAULT).equals(Constant.THEME_ONE))
             super.setTheme(R.style.shadow);
         setContentView(R.layout.activity_search);
         if (getSupportActionBar() == null) {
@@ -59,11 +57,11 @@ public class SearchActivity extends AppCompatActivity implements DialogCount.Com
         }
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        searchView = (SearchView) findViewById(R.id.search_view);
-        relativeLayout = (RelativeLayout) findViewById(R.id.relative);
+        mSearchView = (SearchView) findViewById(R.id.search_view);
+        mRelativeLay = (RelativeLayout) findViewById(R.id.relative);
         RecyclerView mRecycler = (RecyclerView) findViewById(R.id.recycler);
-        adapter = new RecyclerAdapter();
-        AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(adapter);
+        mRecyclerAdapter = new RecyclerAdapter();
+        AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(mRecyclerAdapter);
         alphaAdapter.setDuration(450);
         alphaAdapter.setFirstOnly(false);
         ScaleInAnimationAdapter ScaleInAdapter = new ScaleInAnimationAdapter(alphaAdapter);
@@ -76,54 +74,54 @@ public class SearchActivity extends AppCompatActivity implements DialogCount.Com
             mRecycler.getItemAnimator().setAddDuration(400);
             mRecycler.getItemAnimator().setRemoveDuration(700);
         }
-        searchView.setIconified(false);
+        mSearchView.setIconified(false);
         initListeners();
     }
 
     public void parseJson(final String query) throws JSONException, ExecutionException, InterruptedException {
-        new NetworkUtilz(new NetworkUtilz.AsyncResponse() {
+        new NetworkUtilsJson(new NetworkUtilsJson.TaskFinishedListener() {
             @Override
             public void processFinish(String output) throws JSONException, ParseException {
                 if (output != null) {
-                    JSONArray array;
-                    JSONObject obj;
-                    String dataNeeded;
-                    String timestamp;
-                    MCModel model;
-                    list = new ArrayList<>();
-                    obj = new JSONObject(output);
-                    array = obj.getJSONObject("response").getJSONArray("docs");
+                    JSONArray mJsonArray;
+                    JSONObject mJsonObj;
+                    String mObjData;
+                    String mTimestamp;
+                    MCModel mMCModel;
+                    mDataList = new ArrayList<>();
+                    mJsonObj = new JSONObject(output);
+                    mJsonArray = mJsonObj.getJSONObject("response").getJSONArray("docs");
                     int x = 0;
-                    while (x != array.length()) {
-                        model = new MCModel();
-                        obj = (JSONObject) array.get(x);
-                        dataNeeded = obj.getString("id");
-                        model.setLibrary(dataNeeded);
-                        dataNeeded = obj.getString("latestVersion");
-                        model.setLatestVersion(dataNeeded);
-                        timestamp = String.valueOf(new SimpleDateFormat("MMddyyHHmmss", Locale.US)
-                                .parse(String.valueOf(obj.getLong("timestamp"))));
-                        model.setTimestamp(timestamp);
-                        list.add(model);
+                    while (x != mJsonArray.length()) {
+                        mMCModel = new MCModel();
+                        mJsonObj = (JSONObject) mJsonArray.get(x);
+                        mObjData = mJsonObj.getString("id");
+                        mMCModel.setLibrary(mObjData);
+                        mObjData = mJsonObj.getString("latestVersion");
+                        mMCModel.setLatestVersion(mObjData);
+                        mTimestamp = String.valueOf(new SimpleDateFormat("MMddyyHHmmss", Locale.US)
+                                .parse(String.valueOf(mJsonObj.getLong("timestamp"))));
+                        mMCModel.setTimestamp(mTimestamp);
+                        mDataList.add(mMCModel);
                         x++;
                     }
-                    if (preferences.getBoolean(single, false)) {
-                        adapter.update(null, list.get(0));
+                    if (mPreferences.getBoolean(Constant.SINGLE_KEY, false)) {
+                        mRecyclerAdapter.update(null, mDataList.get(0));
                     } else {
-                        adapter.update(list, null);
+                        mRecyclerAdapter.update(mDataList, null);
                     }
-                    queryy = query;
+                    mQueryS = query;
                 }
             }
         }).execute("https://search.maven.org/solrsearch/select?q=" + query
                 .replace(" ", "")
                 .replace("  ", "")
                 .toLowerCase()
-                .trim() + "&rows=" + preferences.getString(count, "40") + "&wt=json");
+                .trim() + "&rows=" + mPreferences.getString(Constant.COUNT_KEY, "40") + "&wt=json");
     }
 
     public void initListeners() {
-        searchView.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
+        mSearchView.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(final String query) {
                 try {
@@ -137,27 +135,27 @@ public class SearchActivity extends AppCompatActivity implements DialogCount.Com
             @Override
             public boolean onQueryTextChange(String newText) {
                 if (newText.isEmpty()) {
-                    queryy = null;
-                    adapter.clearAll();
+                    mQueryS = null;
+                    mRecyclerAdapter.clearAll();
                 }
                 return false;
             }
         });
 
-        searchView.setOnCloseListener(new android.support.v7.widget.SearchView.OnCloseListener() {
+        mSearchView.setOnCloseListener(new android.support.v7.widget.SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
-                queryy = null;
-                searchView.clearFocus();
-                adapter.clearAll();
+                mQueryS = null;
+                mSearchView.clearFocus();
+                mRecyclerAdapter.clearAll();
                 return false;
             }
         });
 
-        relativeLayout.setOnClickListener(new View.OnClickListener() {
+        mRelativeLay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                searchView.clearFocus();
+                mSearchView.clearFocus();
             }
         });
     }
@@ -178,16 +176,17 @@ public class SearchActivity extends AppCompatActivity implements DialogCount.Com
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.enable_single) {
-            if (!preferences.getBoolean(single, false)) {
+            if (!mPreferences.getBoolean(Constant.SINGLE_KEY, false)) {
                 filterSingular(true);
             }
             return true;
         } else if (id == R.id.disable_single) {
-            if (preferences.getBoolean(single, false)) {
+            if (mPreferences.getBoolean(Constant.SINGLE_KEY, false)) {
                 filterSingular(false);
             }
             return true;
         } else if (id == R.id.choose_results) {
+            mSearchView.clearFocus();
             new DialogCount().show(getSupportFragmentManager(), "dialogCount");
         } else if (id == R.id.remove_results) {
             removeResult();
@@ -196,19 +195,19 @@ public class SearchActivity extends AppCompatActivity implements DialogCount.Com
     }
 
     public void filterSingular(boolean isEnabled) {
-        if (editor == null)
-            editor = preferences.edit();
-        editor.remove(single);
+        if (MPEditor == null)
+            MPEditor = mPreferences.edit();
+        MPEditor.remove(Constant.SINGLE_KEY);
         if (isEnabled) {
-            editor.remove(count);
-            editor.putString(count, "1");
+            MPEditor.remove(Constant.COUNT_KEY);
+            MPEditor.putString(Constant.SINGLE_KEY, "1");
         }
-        editor.putBoolean(single, isEnabled);
-        editor.apply();
-        if (list != null && !searchView.getQuery().toString().isEmpty() && !isEnabled)
-            adapter.update(list, null);
-        else if (list != null && !searchView.getQuery().toString().isEmpty() && isEnabled)
-            adapter.update(null, list.get(0));
+        MPEditor.putBoolean(Constant.SINGLE_KEY, isEnabled);
+        MPEditor.apply();
+        if (mDataList != null && !mSearchView.getQuery().toString().isEmpty() && !isEnabled)
+            mRecyclerAdapter.update(mDataList, null);
+        else if (mDataList != null && !mSearchView.getQuery().toString().isEmpty() && isEnabled)
+            mRecyclerAdapter.update(null, mDataList.get(0));
     }
 
     @Override
@@ -221,27 +220,27 @@ public class SearchActivity extends AppCompatActivity implements DialogCount.Com
 
     @Override
     public void setResult(String number) {
-        if (editor == null)
-            editor = preferences.edit();
+        if (MPEditor == null)
+            MPEditor = mPreferences.edit();
         if (number == null) {
-            editor.remove(count);
-            editor.apply();
+            MPEditor.remove(Constant.COUNT_KEY);
+            MPEditor.apply();
         } else {
-            if (!preferences.getString(count, "40").equals(number)) {
-                if (editor == null)
-                    editor = preferences.edit();
-                editor.remove(count);
-                editor.putString(count, number);
-                if (number.equals("1") && preferences.getBoolean(single, true)) {
-                    editor.remove(single);
-                    editor.putBoolean(single, true);
+            if (!mPreferences.getString(Constant.COUNT_KEY, "40").equals(number)) {
+                if (MPEditor == null)
+                    MPEditor = mPreferences.edit();
+                MPEditor.remove(Constant.COUNT_KEY);
+                MPEditor.putString(Constant.COUNT_KEY, number);
+                if (number.equals("1") && mPreferences.getBoolean(Constant.SINGLE_KEY, true)) {
+                    MPEditor.remove(Constant.SINGLE_KEY);
+                    MPEditor.putBoolean(Constant.SINGLE_KEY, true);
                 }
-                editor.apply();
-                adapter.clearAll();
-                if (list != null && !searchView.getQuery().toString().isEmpty()) {
+                MPEditor.apply();
+                mRecyclerAdapter.clearAll();
+                if (mDataList != null && !mSearchView.getQuery().toString().isEmpty()) {
                     for (int i = 0; i <= Integer.parseInt(number) - 1; i++) {
-                        if (i <= list.size() - 1)
-                            adapter.updateCount(list.get(i));
+                        if (i <= mDataList.size() - 1)
+                            mRecyclerAdapter.updateCount(mDataList.get(i));
                     }
                 }
             }
@@ -250,17 +249,17 @@ public class SearchActivity extends AppCompatActivity implements DialogCount.Com
     }
 
     public void removeResult() {
-        if (editor == null)
-            editor = preferences.edit();
-        editor.remove(count);
-        editor.apply();
-        if(queryy != null) {
+        if (MPEditor == null)
+            MPEditor = mPreferences.edit();
+        MPEditor.remove(Constant.COUNT_KEY);
+        MPEditor.apply();
+        if(mQueryS != null) {
             try {
-                parseJson(queryy);
+                parseJson(mQueryS);
             } catch (JSONException | ExecutionException | InterruptedException e) {
                 e.printStackTrace();
             }
-            adapter.update(list, null);
+            mRecyclerAdapter.update(mDataList, null);
         }
     }
 }
