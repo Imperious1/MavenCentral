@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".activites.InformationActivity">
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="dependencies {
+    // Google Play Services
+    compile 'com.google.android.gms:play-services:8.4.0'
+
+    // Support Libraries
+    compile 'com.android.support:appcompat-v7:23.2.1'
+    compile 'com.android.support:cardview-v7:23.2.1'
+    compile 'com.android.support:design:23.2.1'
+    compile 'com.android.support:gridlayout-v7:23.2.1'
+    compile 'com.android.support:leanback-v17:23.2.1'
+    compile 'com.android.support:mediarouter-v7:23.2.1'
+    compile 'com.android.support:palette-v7:23.2.1'
+    compile 'com.android.support:recyclerview-v7:23.2.1'
+    compile 'com.android.support:support-annotations:23.2.1'
+    compile 'com.android.support:support-v13:23.2.1'
+    compile 'com.android.support:support-v4:23.2.1'
+
+    // Note: these libraries require the Google Repository and Android Repository
+    //       to be installed via the SDK manager.
+}"
+            android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+    </ScrollView>
+
+</RelativeLayout>

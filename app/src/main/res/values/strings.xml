@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Maven Central</string>
+    <string name="action_info">Information</string>
+    <string name="title_activity_search">SearchActivity</string>
+    <string name="action_single_enable">Enable Single Results</string>
+    <string name="action_single_disable">Disable Single Results</string>
+    <string name="action_theme_one">Set Orange Theme</string>
+    <string name="action_default_theme">Set MD Grey Theme</string>
+    <string name="exit_fragment">Exit the fragment</string>
+    <string name="enter_number">Enter a number...</string>
+    <string name="custom_number">Input custom #</string>
+    <string name="text_submit_button">submit</string>
+    <string name="remove_number">Remove Custom #</string>
+</resources>
