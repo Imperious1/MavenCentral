@@ -40,8 +40,6 @@ public class DialogResultInfo extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_result_info, container);
         mDescription = (TextView) view.findViewById(R.id.frag_result_description);
-        TextView mGradleTemplate = (TextView) view.findViewById(R.id.gradle_template);
-        TextView mMavenTemplate = (TextView) view.findViewById(R.id.maven_template);
         TextView mTitle = (TextView) view.findViewById(R.id.frag_result_title);
         TextView mGradleDependency = (TextView) view.findViewById(R.id.frag_result_gradle_dependency);
         TextView mMavenDependency = (TextView) view.findViewById(R.id.frag_result_maven_dependency);
@@ -53,9 +51,7 @@ public class DialogResultInfo extends DialogFragment {
             }
         });
         String[] erData4now = RecyclerAdapter.getList().get(RecyclerAdapter.test()).getLibrary().split(":");
-        System.out.println(erData4now[0]);
         String mLatestVersion = RecyclerAdapter.getList().get(RecyclerAdapter.test()).getLatestVersion();
-
         mGradleDependency.setText(String.format("dependencies { \n  compile '%s%s:%s' \n}", erData4now[0], erData4now[1], mLatestVersion));
         mMavenDependency.setText(String.format("<dependency> \n <groupId>%s</groupId>\n <artifactId>%s</artifactId>\n <version>%s</version\n</dependency>", erData4now[0], erData4now[1], mLatestVersion));
         mTitle.setText(String.format("%s%s:%s", erData4now[0], erData4now[1], mLatestVersion));

@@ -95,7 +95,6 @@ public class SearchActivity extends AppCompatActivity implements listeners.Dialo
                     JSONObject mJsonObj;
                     String mObjData;
                     String mTimestamp;
-                    String[] attempt2;
                     MCModel mMCModel;
                     mDataList = new ArrayList<>();
                     mJsonObj = new JSONObject(output);
@@ -106,8 +105,6 @@ public class SearchActivity extends AppCompatActivity implements listeners.Dialo
                         mJsonObj = (JSONObject) mJsonArray.get(x);
                         mObjData = mJsonObj.getString("id");
                         mMCModel.setLibrary(mObjData);
-                        attempt2 = mObjData.split(":");
-                        mMCModel.setPackageName(attempt2[1]);
                         mObjData = mJsonObj.getString("latestVersion");
                         mMCModel.setLatestVersion(mObjData);
                         mTimestamp = String.valueOf(new SimpleDateFormat("MMddyyHHmmss", Locale.US)

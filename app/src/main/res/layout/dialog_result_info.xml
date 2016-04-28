@@ -88,18 +88,10 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_below="@+id/frag_result_maven_dependency"
-            android:text="EXIT" />
-
-        <Button
-            android:id="@+id/button"
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/frag_result_maven_dependency"
-            android:layout_alignParentBottom="true"
-            android:layout_alignStart="@+id/frag_result_maven_dependency"
-            android:actionProviderClass="android.widget.ShareActionProvider"
-            android:text="SHARE" />
+            android:text="EXIT"
+            android:background="@drawable/color_shape_curved"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
 
         <TextView
             android:id="@+id/textView"
