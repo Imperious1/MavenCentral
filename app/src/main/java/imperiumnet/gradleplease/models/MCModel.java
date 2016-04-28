@@ -4,6 +4,7 @@ package imperiumnet.gradleplease.models;
 public class MCModel {
     private String latestVersion;
     private String library;
+    private String packageName;
     private String timestamp;
 
     public String getLatestVersion() {
@@ -28,5 +29,13 @@ public class MCModel {
 
     public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public String getPackageName() {
+        return packageName;
+    }
+
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
     }
 }

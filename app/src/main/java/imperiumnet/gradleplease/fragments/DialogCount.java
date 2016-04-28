@@ -12,35 +12,32 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import imperiumnet.gradleplease.R;
+import imperiumnet.gradleplease.callbacks.listeners;
 
 public class DialogCount extends DialogFragment {
 
-    public interface DialogClickListeners {
-        void hideFrag();
-        void setResult(String number);
-    }
     AppCompatImageButton close;
     Button btnSubmit;
     EditText userInput;
-    DialogClickListeners mDialogClickListener;
+    listeners.DialogClickListeners mDialogClickListener;
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        mDialogClickListener = (DialogClickListeners) activity;
+        mDialogClickListener = (listeners.DialogClickListeners) activity;
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.test_dialog, container);
+        View view = inflater.inflate(R.layout.dialog_count, container);
         close = (AppCompatImageButton) view.findViewById(R.id.close_result);
         btnSubmit = (Button) view.findViewById(R.id.apply_result);
         userInput = (EditText) view.findViewById(R.id.edit_result);
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDialogClickListener.hideFrag();
+                mDialogClickListener.hideFrag(false);
             }
         });
         btnSubmit.setOnClickListener(new View.OnClickListener() {
@@ -49,6 +46,7 @@ public class DialogCount extends DialogFragment {
                 mDialogClickListener.setResult(userInput.getText().toString());
             }
         });
+
         return view;
     }
 }

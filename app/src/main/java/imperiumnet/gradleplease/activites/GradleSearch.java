@@ -12,7 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import imperiumnet.gradleplease.R;
-import imperiumnet.gradleplease.constants.Constant;
+import imperiumnet.gradleplease.utils.Constant;
 
 public class GradleSearch extends AppCompatActivity {
 
@@ -91,5 +91,4 @@ public class GradleSearch extends AppCompatActivity {
             }
         });
     }
-
 }

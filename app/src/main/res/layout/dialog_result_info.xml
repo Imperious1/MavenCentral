@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="15dp">
+
+        <TextView
+            android:id="@+id/frag_result_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:text="Title..."
+            android:textAlignment="center"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textIsSelectable="true"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/frag_result_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/textView"
+            android:layout_alignStart="@+id/textView"
+            android:layout_below="@+id/frag_result_title"
+            android:layout_marginTop="53dp"
+            android:text="No description"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/gradle_template"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/frag_result_description"
+            android:layout_alignStart="@+id/frag_result_description"
+            android:layout_below="@+id/frag_result_description"
+            android:layout_marginTop="13dp"
+            android:text="Gradle template: "
+            android:textAppearance="?android:attr/textAppearanceLargePopupMenu"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/frag_result_gradle_dependency"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/gradle_template"
+            android:selectAllOnFocus="true"
+            android:text="dependencies { \n    \n}"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textIsSelectable="true" />
+
+        <TextView
+            android:id="@+id/maven_template"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/frag_result_gradle_dependency"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="24dp"
+            android:text="Maven template:"
+            android:textAppearance="?android:attr/textAppearanceLargePopupMenu"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/frag_result_maven_dependency"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/maven_template"
+            android:selectAllOnFocus="true"
+            android:text="@string/delete_later"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textIsSelectable="true" />
+
+        <Button
+            android:id="@+id/exit_result"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/frag_result_maven_dependency"
+            android:text="EXIT" />
+
+        <Button
+            android:id="@+id/button"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/frag_result_maven_dependency"
+            android:layout_alignParentBottom="true"
+            android:layout_alignStart="@+id/frag_result_maven_dependency"
+            android:actionProviderClass="android.widget.ShareActionProvider"
+            android:text="SHARE" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/frag_result_title"
+            android:layout_alignStart="@+id/frag_result_title"
+            android:layout_below="@+id/frag_result_title"
+            android:layout_marginTop="29dp"
+            android:text="Description:"
+            android:textAppearance="?android:attr/textAppearanceLargePopupMenu"
+            android:textSize="18sp" />
+
+    </RelativeLayout>
+</ScrollView>

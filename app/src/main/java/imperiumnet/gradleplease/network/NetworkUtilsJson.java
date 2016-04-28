@@ -3,67 +3,73 @@ package imperiumnet.gradleplease.network;
 import android.os.AsyncTask;
 
 import org.json.JSONException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.io.InputStream;
 import java.text.ParseException;
 
-import javax.net.ssl.HttpsURLConnection;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import imperiumnet.gradleplease.callbacks.listeners;
+import imperiumnet.gradleplease.utils.Constant;
 
 public class NetworkUtilsJson extends AsyncTask<String, Void, String> {
 
+    public listeners.TaskFinishedListener mTaskFinishedListener;
+
+    public NetworkUtilsJson(listeners.TaskFinishedListener mTaskFinishListener) {
+        this.mTaskFinishedListener = mTaskFinishListener;
+    }
+
     @Override
     protected String doInBackground(String... params) {
-        String s;
         try {
-            s = queryGradle(params[0]);
-            return s;
+            if (params[0].equals(Constant.DENY)) {
+                return DownloadData.queryGradle(params[1]);
+            } else {
+                InputStream is = DownloadData.getXml(params[1]);
+                return parseData(is);
+            }
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public interface TaskFinishedListener {
-        void processFinish(String output) throws JSONException, ParseException;
-    }
-
-    public TaskFinishedListener mTaskFinishedListener;
-
-    public NetworkUtilsJson(TaskFinishedListener mTaskFinishListener) {
-        this.mTaskFinishedListener = mTaskFinishListener;
-    }
-
     @Override
     protected void onPostExecute(String result) {
         try {
             mTaskFinishedListener.processFinish(result);
-        } catch (JSONException | ParseException e) {
+        } catch (JSONException | ParseException | IOException | SAXException e) {
             e.printStackTrace();
         }
     }
 
-    public String queryGradle(String url) throws IOException {
-        HttpURLConnection mConnection;
-        if (isHttps(url))
-            mConnection = (HttpURLConnection) new URL(url).openConnection();
-        else
-            mConnection = (HttpsURLConnection) new URL(url).openConnection();
-        BufferedReader br = new BufferedReader(new InputStreamReader(mConnection.getInputStream()));
-        String s;
-        StringBuilder sb = new StringBuilder();
-        while ((s = br.readLine()) != null)
-            sb.append(s);
-        br.close();
-        mConnection.disconnect();
-        return sb.toString();
-    }
+    public String parseData(InputStream inputStream) {
+        DocumentBuilderFactory dcb = DocumentBuilderFactory.newInstance();
+        try {
+            DocumentBuilder dc = dcb.newDocumentBuilder();
+            Document document = dc.parse(inputStream);
+            NodeList nodeList = document.getElementsByTagName("description");
+            Node node = null;
+            if (nodeList.item(0) != null) {
+                node = nodeList.item(0);
+            }
+            if (node != null) {
+                return node.getTextContent();
+            } else
+                return null;
 
-    public boolean isHttps(String url) {
-        return url.contains("https");
+        } catch (SAXException | ParserConfigurationException | IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
 
