@@ -16,14 +16,14 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import imperiumnet.gradleplease.callbacks.listeners;
+import imperiumnet.gradleplease.callbacks.Listeners;
 import imperiumnet.gradleplease.utils.Constant;
 
 public class NetworkUtilsJson extends AsyncTask<String, Void, String> {
 
-    public listeners.TaskFinishedListener mTaskFinishedListener;
+    public Listeners.TaskFinishedListener mTaskFinishedListener;
 
-    public NetworkUtilsJson(listeners.TaskFinishedListener mTaskFinishListener) {
+    public NetworkUtilsJson(Listeners.TaskFinishedListener mTaskFinishListener) {
         this.mTaskFinishedListener = mTaskFinishListener;
     }
 

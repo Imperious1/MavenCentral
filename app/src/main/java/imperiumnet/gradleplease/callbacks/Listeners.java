@@ -6,14 +6,20 @@ import org.xml.sax.SAXException;
 import java.io.IOException;
 import java.text.ParseException;
 
-public class listeners {
+public class Listeners {
     public interface TaskFinishedListener {
         void processFinish(String output) throws JSONException, ParseException, IOException, SAXException;
     }
 
     public interface DialogClickListeners {
         void hideFrag(boolean isResult);
+    }
 
-        void setResult(String number);
+    public interface ThemeChangeListener {
+        void changeTheme(String data);
+    }
+
+    public interface DataSetChangedListener {
+        void clearData(String data, boolean value, boolean isSwitch);
     }
 }

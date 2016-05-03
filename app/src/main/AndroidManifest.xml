@@ -17,7 +17,9 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.BROWSABLE" />
             </intent-filter>
         </activity>
         <activity
@@ -30,6 +32,15 @@
         <activity
             android:name=".activites.SearchActivity"
             android:label="@string/title_activity_search"
+            android:parentActivityName=".activites.GradleSearch"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="imperiumnet.gradleplease.activites.GradleSearch" />
+        </activity>
+        <activity
+            android:name=".activites.SettingsActivity"
+            android:label="@string/title_activity_settings"
             android:parentActivityName=".activites.GradleSearch"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data

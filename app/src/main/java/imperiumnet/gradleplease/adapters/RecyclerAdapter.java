@@ -16,7 +16,7 @@ import imperiumnet.gradleplease.models.MCModel;
 public abstract class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyViewHolder> {
     private static ArrayList<MCModel> list = new ArrayList<>();
     private static int position;
-    private int itemRange;
+    private static int itemRange;
 
     public static int test() {
         return position;
@@ -65,11 +65,6 @@ public abstract class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapt
             RecyclerAdapter.list.add(model);
             notifyItemInserted(0);
         }
-    }
-
-    public void updateCount(MCModel model) {
-        list.add(model);
-        notifyItemInserted(list.size() - 1);
     }
 
     public void clearAll() {

@@ -1,0 +1,27 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="Theme Settings">
+        <ListPreference
+            android:defaultValue="R.style.ThemeTeal"
+            android:dialogTitle="Choose a color"
+            android:entries="@array/entries"
+            android:entryValues="@array/entryValues"
+            android:key="colors"
+            android:summary="Select between 16 colors"
+            android:title="Choose Application Theme" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Search Settings">
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="single"
+            android:summary="Allow only a single search result to appear"
+            android:title="Singular Resultimus Maximus Prime" />
+        <EditTextPreference
+            android:defaultValue="40"
+            android:key="custom"
+            android:summary="Custom number of results to be shown (25 is default)"
+            android:title="Set amount of results to appear" />
+    </PreferenceCategory>
+</PreferenceScreen>

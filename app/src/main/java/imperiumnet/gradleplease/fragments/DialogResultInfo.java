@@ -20,19 +20,19 @@ import java.io.IOException;
 
 import imperiumnet.gradleplease.R;
 import imperiumnet.gradleplease.adapters.RecyclerAdapter;
-import imperiumnet.gradleplease.callbacks.listeners;
+import imperiumnet.gradleplease.callbacks.Listeners;
 import imperiumnet.gradleplease.network.NetworkUtilsJson;
 import imperiumnet.gradleplease.utils.Constant;
 
 public class DialogResultInfo extends DialogFragment {
 
-    listeners.DialogClickListeners mDialogClickListener;
+    Listeners.DialogClickListeners mDialogClickListener;
     private TextView mDescription;
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        mDialogClickListener = (listeners.DialogClickListeners) activity;
+        mDialogClickListener = (Listeners.DialogClickListeners) activity;
     }
 
     @Nullable
@@ -55,7 +55,7 @@ public class DialogResultInfo extends DialogFragment {
         mGradleDependency.setText(String.format("dependencies { \n  compile '%s%s:%s' \n}", erData4now[0], erData4now[1], mLatestVersion));
         mMavenDependency.setText(String.format("<dependency> \n <groupId>%s</groupId>\n <artifactId>%s</artifactId>\n <version>%s</version\n</dependency>", erData4now[0], erData4now[1], mLatestVersion));
         mTitle.setText(String.format("%s%s:%s", erData4now[0], erData4now[1], mLatestVersion));
-        new NetworkUtilsJson(new listeners.TaskFinishedListener() {
+        new NetworkUtilsJson(new Listeners.TaskFinishedListener() {
             @Override
             public void processFinish(String output) throws JSONException, ParseException, IOException, SAXException {
                 mDescription.setText(output);
