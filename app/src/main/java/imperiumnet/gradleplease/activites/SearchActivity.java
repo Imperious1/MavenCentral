@@ -1,5 +1,6 @@
 package imperiumnet.gradleplease.activites;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -35,18 +36,19 @@ import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter;
 import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter;
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
-public class SearchActivity extends AppCompatActivity implements Listeners.DialogClickListeners {
+public class SearchActivity extends AppCompatActivity implements Listeners.DialogClickListeners, Listeners.ThemeSearchChangeListener {
 
     private static SearchView mSearchView;
     private static RelativeLayout mRelativeLay;
     private static RecyclerAdapter mRecyclerAdapter;
     private static SharedPreferences mPreferences;
     private static String mQuery;
-    private static int number;
-    private static String data;
+    private static int mRows;
+    private static String mSingle;
+    private static Context mContext;
 
     public static void parseJson(final String query) throws JSONException, ExecutionException, InterruptedException {
-        if (number == 0)
+        if (mRows == 0)
             new NetworkUtilsJson(new Listeners.TaskFinishedListener() {
                 @Override
                 public void processFinish(String output) throws JSONException, ParseException {
@@ -66,7 +68,7 @@ public class SearchActivity extends AppCompatActivity implements Listeners.Dialo
                 .replace(" ", "")
                 .replace("  ", "")
                 .toLowerCase()
-                .trim() + "&rows=" + number + "&wt=json");
+                .trim() + "&rows=" + mRows + "&wt=json");
     }
 
     private static void test(final String output, final String query) throws JSONException, ParseException {
@@ -94,14 +96,14 @@ public class SearchActivity extends AppCompatActivity implements Listeners.Dialo
                 x++;
             }
             mQuery = query;
-            if (data == null) {
+            if (mSingle == null) {
                 if (mPreferences.getBoolean(Constant.SINGLE_KEY, false)) {
                     mRecyclerAdapter.update(null, mDataList.get(0));
                 } else {
                     mRecyclerAdapter.update(mDataList, null);
                 }
             } else {
-                if (data.equals("true")) {
+                if (mSingle.equals("true")) {
                     mRecyclerAdapter.update(null, mDataList.get(0));
                 } else {
                     mRecyclerAdapter.update(mDataList, null);
@@ -110,8 +112,8 @@ public class SearchActivity extends AppCompatActivity implements Listeners.Dialo
         }
     }
 
-    public static void setNumber(int number) {
-        SearchActivity.number = number;
+    public static void setmRows(int mRows) {
+        SearchActivity.mRows = mRows;
     }
 
     public static RecyclerAdapter getRecyclerAdapter() {
@@ -122,47 +124,20 @@ public class SearchActivity extends AppCompatActivity implements Listeners.Dialo
         return mQuery;
     }
 
-    public static void setData(String data) {
-        SearchActivity.data = data;
+    public static void setSingle(String mSingle) {
+        SearchActivity.mSingle = mSingle;
+    }
+
+    public static Context getContext() {
+        return mContext;
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         super.setTheme(GradleSearch.swapTheme());
-        setContentView(R.layout.activity_search);
-        if (getSupportActionBar() == null) {
-            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-            setSupportActionBar(toolbar);
-        }
-        if (getSupportActionBar() != null)
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        mSearchView = (SearchView) findViewById(R.id.search_view);
-        mRelativeLay = (RelativeLayout) findViewById(R.id.relative);
-        RecyclerView mRecycler = (RecyclerView) findViewById(R.id.recycler);
-        mRecyclerAdapter = new RecyclerAdapter() {
-            @Override
-            public void onClick1(View v, int position) {
-                DialogResultInfo info = new DialogResultInfo();
-                info.show(getSupportFragmentManager(), "tagfrag");
-            }
-        };
-        AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(mRecyclerAdapter);
-        alphaAdapter.setDuration(450);
-        alphaAdapter.setFirstOnly(false);
-        ScaleInAnimationAdapter ScaleInAdapter = new ScaleInAnimationAdapter(alphaAdapter);
-        ScaleInAdapter.setFirstOnly(false);
-        ScaleInAdapter.setDuration(150);
-        if (mRecycler != null) {
-            mRecycler.setLayoutManager(new LinearLayoutManager(this));
-            mRecycler.setAdapter(ScaleInAdapter);
-            mRecycler.setItemAnimator(new SlideInUpAnimator());
-            mRecycler.getItemAnimator().setAddDuration(400);
-            mRecycler.getItemAnimator().setRemoveDuration(700);
-        }
-        mSearchView.setIconified(false);
-        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        initListeners();
+        initialize();
+        mContext = this;
     }
 
     private void initListeners() {
@@ -233,5 +208,48 @@ public class SearchActivity extends AppCompatActivity implements Listeners.Dialo
                 .remove(getSupportFragmentManager().findFragmentByTag("tagfrag"))
                 .commit();
     }
+
+    public void initialize() {
+        setContentView(R.layout.activity_search);
+        if (getSupportActionBar() == null) {
+            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
+        }
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mSearchView = (SearchView) findViewById(R.id.search_view);
+        mRelativeLay = (RelativeLayout) findViewById(R.id.relative);
+        RecyclerView mRecycler = (RecyclerView) findViewById(R.id.recycler);
+        mRecyclerAdapter = new RecyclerAdapter() {
+            @Override
+            public void onClick1(View v, int position) {
+                DialogResultInfo info = new DialogResultInfo();
+                info.show(getSupportFragmentManager(), "tagfrag");
+            }
+        };
+        AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(mRecyclerAdapter);
+        alphaAdapter.setDuration(450);
+        alphaAdapter.setFirstOnly(false);
+        ScaleInAnimationAdapter ScaleInAdapter = new ScaleInAnimationAdapter(alphaAdapter);
+        ScaleInAdapter.setFirstOnly(false);
+        ScaleInAdapter.setDuration(150);
+        if (mRecycler != null) {
+            mRecycler.setLayoutManager(new LinearLayoutManager(this));
+            mRecycler.setAdapter(ScaleInAdapter);
+            mRecycler.setItemAnimator(new SlideInUpAnimator());
+            mRecycler.getItemAnimator().setAddDuration(400);
+            mRecycler.getItemAnimator().setRemoveDuration(700);
+        }
+        mSearchView.setIconified(false);
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        initListeners();
+    }
+
+    @Override
+    public void changeTheme(String data) {
+        super.setTheme(GradleSearch.swapTheme(data));
+        initialize();
+    }
 }
 
+//TODO 1. if you change theme and press "back" to go to the search, the home as up button disappears, fix it.

@@ -51,7 +51,7 @@ public class GradleSearch extends AppCompatActivity {
             case "color_orange":
                 return R.style.OrangeTheme;
             default:
-                return R.style.AmberTheme;
+                return R.style.TealTheme;
         }
     }
 
@@ -88,7 +88,7 @@ public class GradleSearch extends AppCompatActivity {
             case "color_orange":
                 return R.style.OrangeTheme;
             default:
-                return R.style.AmberTheme;
+                return R.style.TealTheme;
         }
     }
 

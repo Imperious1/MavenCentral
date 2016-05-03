@@ -19,9 +19,9 @@
             android:summary="Allow only a single search result to appear"
             android:title="Singular Resultimus Maximus Prime" />
         <EditTextPreference
-            android:defaultValue="40"
+            android:defaultValue="25"
             android:key="custom"
-            android:summary="Custom number of results to be shown (25 is default)"
+            android:summary="Custom mRows of results to be shown (25 is default)"
             android:title="Set amount of results to appear" />
     </PreferenceCategory>
 </PreferenceScreen>

@@ -2,40 +2,31 @@ package imperiumnet.gradleplease.models;
 
 //MCModel = MavenCentralModel
 public class MCModel {
-    private String latestVersion;
-    private String library;
-    private String packageName;
-    private String timestamp;
+    private String mLatestVersion;
+    private String mLibrary;
+    private String mTimestamp;
 
     public String getLatestVersion() {
-        return latestVersion;
+        return mLatestVersion;
     }
 
     public void setLatestVersion(String mLatestVersion) {
-        this.latestVersion = mLatestVersion;
+        this.mLatestVersion = mLatestVersion;
     }
 
     public String getLibrary() {
-        return library;
+        return mLibrary;
     }
 
-    public void setLibrary(String library) {
-        this.library = library;
+    public void setLibrary(String mLibrary) {
+        this.mLibrary = mLibrary;
     }
 
     public String getTimestamp() {
-        return timestamp;
+        return mTimestamp;
     }
 
     public void setTimestamp(String timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public String getPackageName() {
-        return packageName;
-    }
-
-    public void setPackageName(String packageName) {
-        this.packageName = packageName;
+        this.mTimestamp = timestamp;
     }
 }

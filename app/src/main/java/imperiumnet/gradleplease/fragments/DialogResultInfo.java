@@ -50,8 +50,8 @@ public class DialogResultInfo extends DialogFragment {
                 mDialogClickListener.hideFrag(true);
             }
         });
-        String[] erData4now = RecyclerAdapter.getList().get(RecyclerAdapter.test()).getLibrary().split(":");
-        String mLatestVersion = RecyclerAdapter.getList().get(RecyclerAdapter.test()).getLatestVersion();
+        String[] erData4now = RecyclerAdapter.getmSearchList().get(RecyclerAdapter.test()).getLibrary().split(":");
+        String mLatestVersion = RecyclerAdapter.getmSearchList().get(RecyclerAdapter.test()).getLatestVersion();
         mGradleDependency.setText(String.format("dependencies { \n  compile '%s%s:%s' \n}", erData4now[0], erData4now[1], mLatestVersion));
         mMavenDependency.setText(String.format("<dependency> \n <groupId>%s</groupId>\n <artifactId>%s</artifactId>\n <version>%s</version\n</dependency>", erData4now[0], erData4now[1], mLatestVersion));
         mTitle.setText(String.format("%s%s:%s", erData4now[0], erData4now[1], mLatestVersion));

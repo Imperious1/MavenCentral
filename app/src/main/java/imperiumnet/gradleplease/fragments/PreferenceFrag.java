@@ -9,12 +9,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import imperiumnet.gradleplease.R;
+import imperiumnet.gradleplease.activites.SearchActivity;
 import imperiumnet.gradleplease.callbacks.Listeners;
 
 public class PreferenceFrag extends PreferenceFragment {
 
-    Listeners.ThemeChangeListener listener;
-    Listeners.DataSetChangedListener dataListener;
+    Listeners.ThemeSettingsChangeListener mSettingsListener;
+    Listeners.ThemeSearchChangeListener mSearchListener;
+    Listeners.DataSetChangedListener mDataListener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -25,8 +27,9 @@ public class PreferenceFrag extends PreferenceFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        listener = (Listeners.ThemeChangeListener) context;
-        dataListener = (Listeners.DataSetChangedListener) context;
+        mSettingsListener = (Listeners.ThemeSettingsChangeListener) context;
+        mSearchListener = (Listeners.ThemeSearchChangeListener) SearchActivity.getContext();
+        mDataListener = (Listeners.DataSetChangedListener) context;
     }
 
     @Override
@@ -37,21 +40,23 @@ public class PreferenceFrag extends PreferenceFragment {
         mListPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                listener.changeTheme((String) newValue);
+                mSettingsListener.changeTheme((String) newValue);
+                if (mSearchListener != null)
+                    mSearchListener.changeTheme((String) newValue);
                 return true;
             }
         });
         mEditPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                dataListener.clearData(((String) newValue), false, false);
+                mDataListener.clearData(((String) newValue), false, false);
                 return true;
             }
         });
         mSwitchPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                dataListener.clearData(null, ((boolean) newValue), true);
+                mDataListener.clearData(null, ((boolean) newValue), true);
                 return true;
             }
         });

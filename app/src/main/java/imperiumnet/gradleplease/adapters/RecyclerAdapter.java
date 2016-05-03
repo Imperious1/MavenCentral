@@ -14,16 +14,16 @@ import imperiumnet.gradleplease.R;
 import imperiumnet.gradleplease.models.MCModel;
 
 public abstract class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyViewHolder> {
-    private static ArrayList<MCModel> list = new ArrayList<>();
-    private static int position;
-    private static int itemRange;
+    private static ArrayList<MCModel> mSearchList = new ArrayList<>();
+    private static int mItemPosition;
+    private static int mItemRange;
 
     public static int test() {
-        return position;
+        return mItemPosition;
     }
 
-    public static ArrayList<MCModel> getList() {
-        return list;
+    public static ArrayList<MCModel> getmSearchList() {
+        return mSearchList;
     }
 
     @Override
@@ -35,42 +35,42 @@ public abstract class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapt
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        holder.mPrimaryText.setText(String.format("'%s:%s'", list.get(position).getLibrary(), list.get(position).getLatestVersion()));
+        holder.mPrimaryText.setText(String.format("'%s:%s'", mSearchList.get(position).getLibrary(), mSearchList.get(position).getLatestVersion()));
         if (holder.mPrimaryText.getText().toString().length() > 50)
             holder.mPrimaryText.setTextSize(14);
         else holder.mPrimaryText.setTextSize(16);
-        holder.mTimestamp.setText(list.get(position).getTimestamp());
+        holder.mTimestamp.setText(mSearchList.get(position).getTimestamp());
     }
 
     @Override
     public int getItemCount() {
-        return list.size();
+        return mSearchList.size();
     }
 
     // General display things
     public void update(@Nullable ArrayList<MCModel> list, @Nullable MCModel model) {
         if (list != null) {
-            itemRange = RecyclerAdapter.list.size();
-            RecyclerAdapter.list.clear();
-            notifyItemRangeRemoved(0, itemRange);
+            mItemRange = RecyclerAdapter.mSearchList.size();
+            RecyclerAdapter.mSearchList.clear();
+            notifyItemRangeRemoved(0, mItemRange);
             for (MCModel e : list) {
-                RecyclerAdapter.list.add(e);
-                itemRange = RecyclerAdapter.list.size();
+                RecyclerAdapter.mSearchList.add(e);
+                mItemRange = RecyclerAdapter.mSearchList.size();
                 notifyItemInserted(getItemCount());
             }
         } else {
-            itemRange = RecyclerAdapter.list.size();
-            RecyclerAdapter.list.clear();
-            notifyItemRangeRemoved(0, itemRange);
-            RecyclerAdapter.list.add(model);
+            mItemRange = RecyclerAdapter.mSearchList.size();
+            RecyclerAdapter.mSearchList.clear();
+            notifyItemRangeRemoved(0, mItemRange);
+            RecyclerAdapter.mSearchList.add(model);
             notifyItemInserted(0);
         }
     }
 
     public void clearAll() {
-        itemRange = list.size();
-        list.clear();
-        notifyItemRangeRemoved(0, itemRange);
+        mItemRange = mSearchList.size();
+        mSearchList.clear();
+        notifyItemRangeRemoved(0, mItemRange);
     }
 
     public abstract void onClick1(View view, int position);
@@ -90,7 +90,7 @@ public abstract class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapt
                 @Override
                 public void onClick(View v) {
                     onClick1(v, getAdapterPosition());
-                    position = getAdapterPosition();
+                    mItemPosition = getAdapterPosition();
                 }
             });
         }

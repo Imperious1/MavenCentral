@@ -15,7 +15,11 @@ public class Listeners {
         void hideFrag(boolean isResult);
     }
 
-    public interface ThemeChangeListener {
+    public interface ThemeSettingsChangeListener {
+        void changeTheme(String data);
+    }
+
+    public interface ThemeSearchChangeListener {
         void changeTheme(String data);
     }
 

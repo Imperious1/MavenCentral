@@ -13,7 +13,6 @@ public class InformationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_information);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("Information");
         }
     }
 }

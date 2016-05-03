@@ -11,37 +11,38 @@ import java.util.concurrent.ExecutionException;
 import imperiumnet.gradleplease.R;
 import imperiumnet.gradleplease.callbacks.Listeners;
 import imperiumnet.gradleplease.fragments.PreferenceFrag;
+import imperiumnet.gradleplease.utils.Constant;
 
-public class SettingsActivity extends AppCompatActivity implements Listeners.ThemeChangeListener, Listeners.DataSetChangedListener {
+public class SettingsActivity extends AppCompatActivity implements Listeners.ThemeSettingsChangeListener, Listeners.DataSetChangedListener {
 
-    private PreferenceFrag frag;
+    private PreferenceFrag mPrefFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         super.setTheme(GradleSearch.swapTheme());
         initialize();
-        if (frag == null)
+        if (mPrefFragment == null)
             initializePref(false);
         else initializePref(true);
     }
 
     public void initializePref(boolean isExisting) {
-        frag = new PreferenceFrag();
+        mPrefFragment = new PreferenceFrag();
         if (!isExisting)
             getFragmentManager()
                     .beginTransaction()
-                    .add(R.id.coordinator, frag, "fragPref")
+                    .add(R.id.coordinator, mPrefFragment, Constant.PREF_TAG)
                     .commit();
         else
             getFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.coordinator, frag, "fragPref")
+                    .replace(R.id.coordinator, mPrefFragment, Constant.PREF_TAG)
                     .commit();
         if (!isExisting)
             getFragmentManager()
                     .beginTransaction()
-                    .show(frag)
+                    .show(mPrefFragment)
                     .commit();
     }
 
@@ -67,8 +68,8 @@ public class SettingsActivity extends AppCompatActivity implements Listeners.The
     @Override
     public void clearData(String data, boolean value, boolean isSwitch) {
         if (!isSwitch)
-            SearchActivity.setNumber(Integer.parseInt(data));
-        else SearchActivity.setData(String.valueOf(value));
+            SearchActivity.setmRows(Integer.parseInt(data));
+        else SearchActivity.setSingle(String.valueOf(value));
         if (SearchActivity.getRecyclerAdapter() != null)
             SearchActivity.getRecyclerAdapter().clearAll();
         if (SearchActivity.getQuery() != null) {
