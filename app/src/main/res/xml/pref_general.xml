@@ -1,7 +1,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory android:title="Theme Settings">
         <ListPreference
-            android:defaultValue="R.style.ThemeTeal"
+            android:defaultValue="R.style.TealTheme"
             android:dialogTitle="Choose a color"
             android:entries="@array/entries"
             android:entryValues="@array/entryValues"
@@ -20,8 +20,10 @@
             android:title="Singular Resultimus Maximus Prime" />
         <EditTextPreference
             android:defaultValue="25"
+            android:inputType="number"
             android:key="custom"
-            android:summary="Custom mRows of results to be shown (25 is default)"
+            android:maxLength="2"
+            android:summary="Custom rows of results to be shown (25 is default)"
             android:title="Set amount of results to appear" />
     </PreferenceCategory>
 </PreferenceScreen>

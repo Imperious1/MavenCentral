@@ -11,16 +11,17 @@ import java.util.concurrent.ExecutionException;
 import imperiumnet.gradleplease.R;
 import imperiumnet.gradleplease.callbacks.Listeners;
 import imperiumnet.gradleplease.fragments.PreferenceFrag;
+import imperiumnet.gradleplease.singleton.Singleton;
 import imperiumnet.gradleplease.utils.Constant;
 
-public class SettingsActivity extends AppCompatActivity implements Listeners.ThemeSettingsChangeListener, Listeners.DataSetChangedListener {
+public class SettingsActivity extends AppCompatActivity implements Listeners.DataSetChangedListener {
 
     private PreferenceFrag mPrefFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        super.setTheme(GradleSearch.swapTheme());
+        super.setTheme(GradleSearch.swapTheme(null));
         initialize();
         if (mPrefFragment == null)
             initializePref(false);
@@ -54,27 +55,17 @@ public class SettingsActivity extends AppCompatActivity implements Listeners.The
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    public void resetActivity(int style) {
-        super.setTheme(style);
-        initialize();
-    }
-
-    @Override
-    public void changeTheme(String data) {
-        resetActivity(GradleSearch.swapTheme(data));
-        initializePref(true);
-    }
 
     @Override
     public void clearData(String data, boolean value, boolean isSwitch) {
         if (!isSwitch)
-            SearchActivity.setmRows(Integer.parseInt(data));
-        else SearchActivity.setSingle(String.valueOf(value));
-        if (SearchActivity.getRecyclerAdapter() != null)
-            SearchActivity.getRecyclerAdapter().clearAll();
-        if (SearchActivity.getQuery() != null) {
+            Singleton.setRows(Integer.parseInt(data));
+        else Singleton.setSingle(String.valueOf(value));
+        if (Singleton.getRecyclerAdapter() != null)
+            Singleton.getRecyclerAdapter().clearAll();
+        if (Singleton.getQuery() != null) {
             try {
-                SearchActivity.parseJson(SearchActivity.getQuery());
+                SearchActivity.parseJson(Singleton.getQuery());
             } catch (JSONException | ExecutionException | InterruptedException e) {
                 e.printStackTrace();
             }
@@ -82,3 +73,5 @@ public class SettingsActivity extends AppCompatActivity implements Listeners.The
     }
 }
 
+
+//TODO 1. add FAB that does *input here*

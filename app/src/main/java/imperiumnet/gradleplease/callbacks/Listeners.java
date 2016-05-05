@@ -15,15 +15,15 @@ public class Listeners {
         void hideFrag(boolean isResult);
     }
 
-    public interface ThemeSettingsChangeListener {
-        void changeTheme(String data);
-    }
-
-    public interface ThemeSearchChangeListener {
-        void changeTheme(String data);
-    }
-
     public interface DataSetChangedListener {
         void clearData(String data, boolean value, boolean isSwitch);
+    }
+
+    public interface SwipeListener {
+        void handleSwipe(int position);
+    }
+
+    public interface OnHistoryClickListener {
+        void onHistoryClick(String query);
     }
 }

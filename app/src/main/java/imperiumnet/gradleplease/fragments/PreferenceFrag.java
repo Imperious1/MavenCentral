@@ -1,6 +1,7 @@
 package imperiumnet.gradleplease.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
@@ -9,14 +10,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import imperiumnet.gradleplease.R;
-import imperiumnet.gradleplease.activites.SearchActivity;
+import imperiumnet.gradleplease.activites.SettingsActivity;
 import imperiumnet.gradleplease.callbacks.Listeners;
 
 public class PreferenceFrag extends PreferenceFragment {
 
-    Listeners.ThemeSettingsChangeListener mSettingsListener;
-    Listeners.ThemeSearchChangeListener mSearchListener;
-    Listeners.DataSetChangedListener mDataListener;
+    Listeners.DataSetChangedListener mOnDataChangedListener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -27,36 +26,36 @@ public class PreferenceFrag extends PreferenceFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mSettingsListener = (Listeners.ThemeSettingsChangeListener) context;
-        mSearchListener = (Listeners.ThemeSearchChangeListener) SearchActivity.getContext();
-        mDataListener = (Listeners.DataSetChangedListener) context;
+        mOnDataChangedListener = (Listeners.DataSetChangedListener) context;
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         Preference mListPreference = getPreferenceManager().findPreference("colors");
         Preference mEditPreference = getPreferenceManager().findPreference("custom");
         Preference mSwitchPreference = getPreferenceManager().findPreference("single");
         mListPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                mSettingsListener.changeTheme((String) newValue);
-                if (mSearchListener != null)
-                    mSearchListener.changeTheme((String) newValue);
+                startActivity(new Intent(container.getContext()
+                        .getPackageManager()
+                        .getLaunchIntentForPackage(container.getContext().getPackageName())
+                        .addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT)));
+                startActivity(new Intent(container.getContext(), SettingsActivity.class));
                 return true;
             }
         });
         mEditPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                mDataListener.clearData(((String) newValue), false, false);
+                mOnDataChangedListener.clearData(((String) newValue), false, false);
                 return true;
             }
         });
         mSwitchPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                mDataListener.clearData(null, ((boolean) newValue), true);
+                mOnDataChangedListener.clearData(null, ((boolean) newValue), true);
                 return true;
             }
         });

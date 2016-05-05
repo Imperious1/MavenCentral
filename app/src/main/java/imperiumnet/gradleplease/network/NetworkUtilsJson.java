@@ -34,7 +34,7 @@ public class NetworkUtilsJson extends AsyncTask<String, Void, String> {
                 return DownloadData.queryGradle(params[1]);
             } else {
                 InputStream is = DownloadData.getXml(params[1]);
-                return parseData(is);
+                return parseXml(is);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -51,7 +51,7 @@ public class NetworkUtilsJson extends AsyncTask<String, Void, String> {
         }
     }
 
-    public String parseData(InputStream inputStream) {
+    public String parseXml(InputStream inputStream) {
         DocumentBuilderFactory dcb = DocumentBuilderFactory.newInstance();
         try {
             DocumentBuilder dc = dcb.newDocumentBuilder();

@@ -1,11 +1,8 @@
 package imperiumnet.gradleplease.activites;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -22,6 +19,7 @@ import org.json.JSONObject;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
@@ -30,48 +28,46 @@ import imperiumnet.gradleplease.adapters.RecyclerAdapter;
 import imperiumnet.gradleplease.callbacks.Listeners;
 import imperiumnet.gradleplease.fragments.DialogResultInfo;
 import imperiumnet.gradleplease.models.MCModel;
+import imperiumnet.gradleplease.models.QueryModel;
 import imperiumnet.gradleplease.network.NetworkUtilsJson;
+import imperiumnet.gradleplease.singleton.Singleton;
 import imperiumnet.gradleplease.utils.Constant;
 import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter;
 import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter;
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
-public class SearchActivity extends AppCompatActivity implements Listeners.DialogClickListeners, Listeners.ThemeSearchChangeListener {
+public class SearchActivity extends AppCompatActivity implements Listeners.DialogClickListeners, Listeners.OnHistoryClickListener {
 
-    private static SearchView mSearchView;
-    private static RelativeLayout mRelativeLay;
-    private static RecyclerAdapter mRecyclerAdapter;
-    private static SharedPreferences mPreferences;
-    private static String mQuery;
-    private static int mRows;
-    private static String mSingle;
-    private static Context mContext;
+    private SearchView mSearchView;
+    private RelativeLayout mRelativeLay;
 
     public static void parseJson(final String query) throws JSONException, ExecutionException, InterruptedException {
-        if (mRows == 0)
+        if (Singleton.getRows() == 0)
             new NetworkUtilsJson(new Listeners.TaskFinishedListener() {
                 @Override
                 public void processFinish(String output) throws JSONException, ParseException {
-                    test(output, query);
+                    parseMaven(output, query);
+                    addHistory(output, query);
                 }
             }).execute(Constant.DENY, "https://search.maven.org/solrsearch/select?q=" + query
                     .replace(" ", "")
                     .replace("  ", "")
                     .toLowerCase()
-                    .trim() + "&rows=" + mPreferences.getString(Constant.COUNT_KEY, "25") + "&wt=json");
+                    .trim() + "&rows=" + Singleton.getPreferences().getString(Constant.COUNT_KEY, "25") + "&wt=json");
         else new NetworkUtilsJson(new Listeners.TaskFinishedListener() {
             @Override
             public void processFinish(String output) throws JSONException, ParseException {
-                test(output, query);
+                parseMaven(output, query);
+                addHistory(output, query);
             }
         }).execute(Constant.DENY, "https://search.maven.org/solrsearch/select?q=" + query
                 .replace(" ", "")
                 .replace("  ", "")
                 .toLowerCase()
-                .trim() + "&rows=" + mRows + "&wt=json");
+                .trim() + "&rows=" + Singleton.getRows() + "&wt=json");
     }
 
-    private static void test(final String output, final String query) throws JSONException, ParseException {
+    private static void parseMaven(final String output, final String query) throws JSONException, ParseException {
         if (output != null) {
             JSONArray mJsonArray;
             JSONObject mJsonObj;
@@ -95,49 +91,94 @@ public class SearchActivity extends AppCompatActivity implements Listeners.Dialo
                 mDataList.add(mMCModel);
                 x++;
             }
-            mQuery = query;
-            if (mSingle == null) {
-                if (mPreferences.getBoolean(Constant.SINGLE_KEY, false)) {
-                    mRecyclerAdapter.update(null, mDataList.get(0));
+            Singleton.setQuery(query);
+            if (Singleton.getSingle() == null) {
+                if (Singleton.getPreferences().getBoolean(Constant.SINGLE_KEY, false)) {
+                    Singleton.getRecyclerAdapter().update(null, mDataList.get(0));
                 } else {
-                    mRecyclerAdapter.update(mDataList, null);
+                    Singleton.getRecyclerAdapter().update(mDataList, null);
                 }
             } else {
-                if (mSingle.equals("true")) {
-                    mRecyclerAdapter.update(null, mDataList.get(0));
+                if (Singleton.getSingle().equals("true")) {
+                    Singleton.getRecyclerAdapter().update(null, mDataList.get(0));
                 } else {
-                    mRecyclerAdapter.update(mDataList, null);
+                    Singleton.getRecyclerAdapter().update(mDataList, null);
                 }
             }
         }
     }
 
-    public static void setmRows(int mRows) {
-        SearchActivity.mRows = mRows;
+    public static String parseSingleResult(String result) throws JSONException {
+        JSONObject mObject;
+        JSONArray mArray;
+        String mData;
+        mObject = new JSONObject(result);
+        mObject = mObject.getJSONObject("response");
+        mArray = mObject.getJSONArray("docs");
+        mObject = (JSONObject) mArray.get(0);
+        mData = mObject.getString("id");
+        return mData;
     }
 
-    public static RecyclerAdapter getRecyclerAdapter() {
-        return mRecyclerAdapter;
+    public static void addHistory(String output, String query) throws JSONException {
+        if (output != null) {
+            QueryModel model = new QueryModel();
+            model.setmQuery(query);
+            model.setmFirstResult(parseSingleResult(output));
+            model.setmCreationTime(Calendar.getInstance().getTime());
+            addToRealm(model);
+        }
     }
 
-    public static String getQuery() {
-        return mQuery;
-    }
-
-    public static void setSingle(String mSingle) {
-        SearchActivity.mSingle = mSingle;
-    }
-
-    public static Context getContext() {
-        return mContext;
+    public static void addToRealm(QueryModel model) {
+        Singleton.getRealm().beginTransaction();
+        Singleton.getRealm().copyToRealmOrUpdate(model);
+        Singleton.getRealm().commitTransaction();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        super.setTheme(GradleSearch.swapTheme());
-        initialize();
-        mContext = this;
+        super.setTheme(GradleSearch.swapTheme(null));
+        setContentView(R.layout.activity_search);
+        if (getSupportActionBar() == null) {
+            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
+        }
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mSearchView = (SearchView) findViewById(R.id.search_view);
+        mRelativeLay = (RelativeLayout) findViewById(R.id.relative);
+        RecyclerView mRecycler = (RecyclerView) findViewById(R.id.recycler);
+        RecyclerAdapter mRecyclerAdapter = new RecyclerAdapter(true, this) {
+            @Override
+            public void handleSwipe(int position) {
+
+            }
+
+            @Override
+            public void onClick1(View v, int position) {
+                DialogResultInfo info = new DialogResultInfo();
+                info.show(getSupportFragmentManager(), Constant.FRAGMENT_RESULT);
+            }
+        };
+        AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(mRecyclerAdapter);
+        alphaAdapter.setDuration(450);
+        alphaAdapter.setFirstOnly(false);
+        ScaleInAnimationAdapter ScaleInAdapter = new ScaleInAnimationAdapter(alphaAdapter);
+        ScaleInAdapter.setFirstOnly(false);
+        ScaleInAdapter.setDuration(150);
+        if (mRecycler != null) {
+            mRecycler.setLayoutManager(new LinearLayoutManager(this));
+            mRecycler.setAdapter(ScaleInAdapter);
+            mRecycler.setItemAnimator(new SlideInUpAnimator());
+            mRecycler.getItemAnimator().setAddDuration(400);
+            mRecycler.getItemAnimator().setRemoveDuration(700);
+        }
+        Singleton.setRecyclerAdapter(mRecyclerAdapter);
+        Singleton.setListener(this);
+        mSearchView.setIconified(false);
+        initListeners();
     }
 
     private void initListeners() {
@@ -155,7 +196,7 @@ public class SearchActivity extends AppCompatActivity implements Listeners.Dialo
             @Override
             public boolean onQueryTextChange(String newText) {
                 if (newText.isEmpty()) {
-                    mRecyclerAdapter.clearAll();
+                    Singleton.getRecyclerAdapter().clearAll();
                 }
                 return false;
             }
@@ -165,7 +206,7 @@ public class SearchActivity extends AppCompatActivity implements Listeners.Dialo
             @Override
             public boolean onClose() {
                 mSearchView.clearFocus();
-                mRecyclerAdapter.clearAll();
+                Singleton.getRecyclerAdapter().clearAll();
                 return false;
             }
         });
@@ -205,51 +246,19 @@ public class SearchActivity extends AppCompatActivity implements Listeners.Dialo
     public void hideFrag(boolean isResult) {
         getSupportFragmentManager()
                 .beginTransaction()
-                .remove(getSupportFragmentManager().findFragmentByTag("tagfrag"))
+                .remove(getSupportFragmentManager().findFragmentByTag(Constant.FRAGMENT_RESULT))
                 .commit();
     }
 
-    public void initialize() {
-        setContentView(R.layout.activity_search);
-        if (getSupportActionBar() == null) {
-            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-            setSupportActionBar(toolbar);
-        }
-        if (getSupportActionBar() != null)
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        mSearchView = (SearchView) findViewById(R.id.search_view);
-        mRelativeLay = (RelativeLayout) findViewById(R.id.relative);
-        RecyclerView mRecycler = (RecyclerView) findViewById(R.id.recycler);
-        mRecyclerAdapter = new RecyclerAdapter() {
-            @Override
-            public void onClick1(View v, int position) {
-                DialogResultInfo info = new DialogResultInfo();
-                info.show(getSupportFragmentManager(), "tagfrag");
-            }
-        };
-        AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(mRecyclerAdapter);
-        alphaAdapter.setDuration(450);
-        alphaAdapter.setFirstOnly(false);
-        ScaleInAnimationAdapter ScaleInAdapter = new ScaleInAnimationAdapter(alphaAdapter);
-        ScaleInAdapter.setFirstOnly(false);
-        ScaleInAdapter.setDuration(150);
-        if (mRecycler != null) {
-            mRecycler.setLayoutManager(new LinearLayoutManager(this));
-            mRecycler.setAdapter(ScaleInAdapter);
-            mRecycler.setItemAnimator(new SlideInUpAnimator());
-            mRecycler.getItemAnimator().setAddDuration(400);
-            mRecycler.getItemAnimator().setRemoveDuration(700);
-        }
-        mSearchView.setIconified(false);
-        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        initListeners();
-    }
-
     @Override
-    public void changeTheme(String data) {
-        super.setTheme(GradleSearch.swapTheme(data));
-        initialize();
+    public void onHistoryClick(String query) {
+        try {
+            parseJson(query);
+        } catch (JSONException | ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
 
 //TODO 1. if you change theme and press "back" to go to the search, the home as up button disappears, fix it.
+//TODO 2. Save valid searches to Realm
